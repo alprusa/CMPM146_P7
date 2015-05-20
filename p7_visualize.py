@@ -7,7 +7,7 @@ import sys
 def solve(*args):
     """Run clingo with the provided argument list and return the parsed JSON result."""
     
-    CLINGO = "./clingo-4.5.0-macos-10.9/clingo"
+    CLINGO = "./clingowin/clingo"
     
     clingo = subprocess.Popen(
         [CLINGO, "--outf=2"] + list(args),
@@ -93,12 +93,12 @@ def main(argv):
         
     with open(filename) as file:
         fileDict = parse_json_result(file)
-        print file.read()
-    
+       # print file.read()
+   # print fileDict
     dungeon = render_ascii_dungeon(fileDict)
-    side = side_by_side(dungeon)
-    
-    blk = render_ascii_touch(fileDict, side)
+   # side = side_by_side(dungeon)
+    print dungeon
+   # blk = render_ascii_touch(fileDict, side)
     #solve(argv[0])
 
 if __name__ == '__main__':
