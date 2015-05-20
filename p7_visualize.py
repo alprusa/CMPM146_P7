@@ -1,23 +1,7 @@
-import subprocess
 import json
 import collections
 import random
 import sys
-
-def solve(*args):
-    """Run clingo with the provided argument list and return the parsed JSON result."""
-    
-    CLINGO = "./clingowin/clingo"
-    
-    clingo = subprocess.Popen(
-        [CLINGO, "--outf=2"] + list(args),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
-    out, err = clingo.communicate()
-    if err:
-        print err
-        
-    return parse_json_result(out)
 
 def parse_json_result(out):
     """Parse the provided JSON text and extract a dict
@@ -52,11 +36,6 @@ def parse_json_result(out):
     
     return dict(preds)
 
-def solve_randomly(*args):
-    """Like solve() but uses a random sign heuristic with a random seed."""
-    args = list(args) + ["--sign-def=3","--seed="+str(random.randint(0,1<<30))]
-    return solve(*args) 
-
 def render_ascii_dungeon(design):
     """Given a dict of predicates, return an ASCII-art depiction of the a dungeon."""
     
@@ -66,40 +45,16 @@ def render_ascii_dungeon(design):
     glyph = dict(space='.', wall='W', altar='a', gem='g', trap='_')
     block = ''.join([''.join([glyph[sprite.get((r,c),'space')]+' ' for c in range(width)])+'\n' for r in range(width)])
     return block
-
-def render_ascii_touch(design, target):
-    """Given a dict of predicates, return an ASCII-art depiction where the player explored
-    while in the `target` state."""
-    
-    touch = collections.defaultdict(lambda: '-')
-    for cell, state in design['touch']:
-        if state == target:
-            touch[cell] = str(target)
-    param = dict(design['param'])
-    width = param['width']
-    block = ''.join([''.join([str(touch[r,c])+' ' for c in range(width)])+'\n' for r in range(width)])
-    return block
-
-def side_by_side(*blocks):
-    """Horizontally merge two ASCII-art pictures."""
-    
-    lines = []
-    for tup in zip(*map(lambda b: b.split('\n'), blocks)):
-        lines.append(' '.join(tup))
-    return '\n'.join(lines)
     
 def main(argv):
     prog, filename = argv
         
     with open(filename) as file:
         fileDict = parse_json_result(file)
-       # print file.read()
-   # print fileDict
+
     dungeon = render_ascii_dungeon(fileDict)
-   # side = side_by_side(dungeon)
+
     print dungeon
-   # blk = render_ascii_touch(fileDict, side)
-    #solve(argv[0])
 
 if __name__ == '__main__':
   main(sys.argv)
