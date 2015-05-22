@@ -51,7 +51,6 @@ def main(argv):
         
     with open(filename) as file:
         fileDict = parse_json_result(file)
-
     dungeon = render_ascii_dungeon(fileDict)
 
     print dungeon
